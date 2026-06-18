@@ -47,6 +47,13 @@ def _normalize_uid(uid: str) -> str:
     return cleaned
 
 
+def _normalize_browser_channel(value: Any) -> Optional[str]:
+    channel = str(value or "").strip().lower()
+    if not channel or channel == "auto":
+        return None
+    return channel
+
+
 def _field_value(character: dict, fields: list[str]) -> str:
     values = []
     values.extend(character.get("attributes") or [])
@@ -329,7 +336,7 @@ class StarRailProfilePlugin(Star):
             int(self.config.get("width") or 1080),
             int(self.config.get("height") or 1920),
             int(self.config.get("screenshot_timeout") or 120),
-            self.config.get("browser_channel") or None,
+            _normalize_browser_channel(self.config.get("browser_channel")),
         )
         if not bool(self.config.get("keep_html") or False):
             html_path.unlink(missing_ok=True)

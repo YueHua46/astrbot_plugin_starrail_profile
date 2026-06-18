@@ -2,22 +2,49 @@
   "lang": {
     "description": "MiHoMo Parsed Data API 语言",
     "type": "string",
-    "default": "cn"
+    "default": "cn",
+    "options": [
+      "cn",
+      "cht",
+      "en",
+      "jp",
+      "kr",
+      "de",
+      "es",
+      "fr",
+      "id",
+      "pt",
+      "ru",
+      "th",
+      "vi"
+    ],
+    "hint": "下拉选择接口返回语言。常用：cn 简中、cht 繁中、en 英文、jp 日文、kr 韩文。"
   },
   "timeout": {
     "description": "接口请求超时秒数",
     "type": "int",
-    "default": 30
+    "default": 30,
+    "hint": "单次请求等待时间，网络较慢可以适当调高。"
   },
   "retries": {
     "description": "接口请求失败后的最大重试次数，最多 5 次",
     "type": "int",
-    "default": 5
+    "default": 5,
+    "options": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "hint": "只对网络错误、超时、429、5xx 等临时错误重试。"
   },
   "proxy": {
     "description": "可选代理，例如 http://127.0.0.1:7890",
     "type": "string",
-    "default": ""
+    "default": "",
+    "hint": "留空表示不使用显式代理。"
   },
   "use_env_proxy": {
     "description": "是否使用系统环境代理",
@@ -27,12 +54,14 @@
   "output_dir": {
     "description": "报告图片输出目录",
     "type": "string",
-    "default": "data/starrail_profile_reports"
+    "default": "data/starrail_profile_reports",
+    "hint": "图片会保存到 AstrBot 工作目录下的这个路径。"
   },
   "screenshot_timeout": {
     "description": "Playwright 截图超时秒数",
     "type": "int",
-    "default": 120
+    "default": 120,
+    "hint": "远程角色素材加载慢时可以调高。"
   },
   "width": {
     "description": "报告图片宽度",
@@ -45,9 +74,15 @@
     "default": 1920
   },
   "browser_channel": {
-    "description": "可选 Playwright 浏览器通道，例如 chrome、msedge。Linux 推荐留空并安装 chromium。",
+    "description": "Playwright 浏览器通道",
     "type": "string",
-    "default": ""
+    "default": "auto",
+    "options": [
+      "auto",
+      "chrome",
+      "msedge"
+    ],
+    "hint": "auto 会优先使用 Playwright Chromium；本机没有安装 Chromium 时会尝试系统 Chrome/Edge。Linux 托管推荐 auto 并执行 python -m playwright install chromium。"
   },
   "keep_html": {
     "description": "是否保留中间 HTML 文件，调试模板时可打开",
