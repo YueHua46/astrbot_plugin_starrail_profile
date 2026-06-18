@@ -59,6 +59,9 @@ python -m playwright install --with-deps chromium
 - `retries`: 请求失败后的最大重试次数，默认 `5`
 - `proxy`: 可选代理，例如 `http://127.0.0.1:7890`
 - `use_env_proxy`: 是否使用系统环境代理
+- `asset_base`: 素材镜像基础地址，默认 jsDelivr，并内置其他镜像兜底
+- `asset_timeout`: 单个素材下载超时秒数，默认 `20`
+- `inline_assets`: 是否将远程素材内嵌进 HTML，默认开启，建议开启以避免截图时头像/角色图空白
 - `output_dir`: 报告图片输出目录
 - `screenshot_timeout`: Playwright 截图超时秒数
 - `browser_channel`: 可选浏览器通道，例如 `chrome`、`msedge`

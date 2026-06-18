@@ -7,7 +7,7 @@ import tempfile
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, Callable, Optional
 
 import requests
 from astrbot.api import logger
@@ -16,16 +16,56 @@ from astrbot.api.star import Context, Star, register
 
 
 API_BASE = "https://api.mihomo.me/sr_info_parsed"
-ASSET_BASE = "https://raw.githubusercontent.com/Mar-7th/StarRailRes/master/"
+ASSET_BASE = "https://fastly.jsdelivr.net/gh/Mar-7th/StarRailRes@master/"
+ASSET_BASE_FALLBACKS = (
+    "https://cdn.jsdelivr.net/gh/Mar-7th/StarRailRes@master/",
+    "https://gcore.jsdelivr.net/gh/Mar-7th/StarRailRes@master/",
+    "https://raw.githubusercontent.com/Mar-7th/StarRailRes/master/",
+)
 UID_PATTERN = re.compile(r"(?:uid|UID|星铁|崩铁|星穹|开拓者|查|查询|profile|资料)[^\d]{0,24}(\d{8,10})")
 
 
-def _asset(path: Optional[str]) -> str:
+def _normalize_asset_base(value: Optional[str]) -> str:
+    base = str(value or ASSET_BASE).strip() or ASSET_BASE
+    return base.rstrip("/") + "/"
+
+
+def _asset_candidates(path: Optional[str], asset_base: Optional[str] = None) -> list[str]:
     if not path:
-        return ""
-    if path.startswith("http://") or path.startswith("https://"):
-        return path
-    return ASSET_BASE + path.lstrip("/")
+        return []
+    asset_path = str(path).strip()
+    if asset_path.startswith("http://") or asset_path.startswith("https://"):
+        return [asset_path]
+
+    bases = [_normalize_asset_base(asset_base), *ASSET_BASE_FALLBACKS]
+    seen = set()
+    urls = []
+    for base in bases:
+        if base in seen:
+            continue
+        seen.add(base)
+        urls.append(base + asset_path.lstrip("/"))
+    return urls
+
+
+def _asset(path: Optional[str], asset_base: Optional[str] = None) -> str:
+    candidates = _asset_candidates(path, asset_base)
+    return candidates[0] if candidates else ""
+
+
+def _image_content_type(url: str, header_value: str) -> str:
+    content_type = (header_value or "").split(";", 1)[0].strip().lower()
+    if content_type.startswith("image/"):
+        return content_type
+
+    suffix = url.rsplit("?", 1)[0].rsplit(".", 1)[-1].lower()
+    return {
+        "jpg": "image/jpeg",
+        "jpeg": "image/jpeg",
+        "png": "image/png",
+        "webp": "image/webp",
+        "gif": "image/gif",
+    }.get(suffix, "image/png")
 
 
 def _json_script(data: dict) -> str:
@@ -54,16 +94,80 @@ def _normalize_browser_channel(value: Any) -> Optional[str]:
     return channel
 
 
+def _bool_config(value: Any, default: bool = False) -> bool:
+    if value is None:
+        return default
+    if isinstance(value, str):
+        return value.strip().lower() in {"1", "true", "yes", "on", "y"}
+    return bool(value)
+
+
 def _field_value(character: dict, fields: list[str]) -> str:
     values = []
-    values.extend(character.get("attributes") or [])
-    values.extend(character.get("additions") or [])
     values.extend(character.get("statistics") or [])
+    values.extend(character.get("additions") or [])
+    values.extend(character.get("attributes") or [])
     for field in fields:
         for item in values:
             if item.get("field") == field or item.get("name") == field:
                 return str(item.get("display") or item.get("value") or "-")
     return "-"
+
+
+class AssetResolver:
+    def __init__(
+        self,
+        asset_base: Optional[str] = None,
+        timeout: int = 20,
+        proxy: Optional[str] = None,
+        use_env_proxy: bool = False,
+        inline_assets: bool = True,
+    ):
+        self.asset_base = _normalize_asset_base(asset_base)
+        self.timeout = max(1, int(timeout))
+        self.inline_assets = inline_assets
+        self.cache: dict[str, str] = {}
+        self.session = requests.Session()
+        self.session.trust_env = use_env_proxy
+        if proxy:
+            self.session.proxies = {"http": proxy, "https": proxy}
+
+    def __call__(self, path: Optional[str]) -> str:
+        if not path:
+            return ""
+        cache_key = str(path)
+        if cache_key in self.cache:
+            return self.cache[cache_key]
+
+        candidates = _asset_candidates(cache_key, self.asset_base)
+        fallback = candidates[0] if candidates else ""
+        if not self.inline_assets:
+            self.cache[cache_key] = fallback
+            return fallback
+
+        last_error: Optional[Exception] = None
+        for url in candidates:
+            try:
+                response = self.session.get(
+                    url,
+                    timeout=self.timeout,
+                    headers={"User-Agent": "astrbot-plugin-starrail-profile/1.0"},
+                )
+                response.raise_for_status()
+                if not response.content:
+                    continue
+                content_type = _image_content_type(url, response.headers.get("content-type", ""))
+                encoded = base64.b64encode(response.content).decode("ascii")
+                resolved = f"data:{content_type};base64,{encoded}"
+                self.cache[cache_key] = resolved
+                return resolved
+            except requests.RequestException as exc:
+                last_error = exc
+
+        if last_error is not None:
+            logger.warning("星铁素材下载失败，降级使用远程 URL：%s (%s)", cache_key, last_error)
+        self.cache[cache_key] = fallback
+        return fallback
 
 
 def fetch_profile(
@@ -108,7 +212,8 @@ def fetch_profile(
     raise RuntimeError(f"请求失败，已重试 {max_retries} 次：{last_error}")
 
 
-def build_report_html(data: dict) -> str:
+def build_report_html(data: dict, asset_resolver: Optional[Callable[[Optional[str]], str]] = None) -> str:
+    asset = asset_resolver or _asset
     player = data.get("player") or {}
     characters = data.get("characters") or []
     featured = sorted(characters, key=lambda item: (item.get("pos") or [99])[0])[:8]
@@ -116,8 +221,8 @@ def build_report_html(data: dict) -> str:
     info = player.get("space_info") or {}
     memory = info.get("memory_data") or {}
     generated_at = datetime.now().strftime("%Y-%m-%d %H:%M")
-    hero = _asset(top.get("portrait") or top.get("preview") or player.get("avatar", {}).get("icon"))
-    avatar = _asset(player.get("avatar", {}).get("icon") or top.get("icon"))
+    hero = asset(top.get("portrait") or top.get("preview") or player.get("avatar", {}).get("icon"))
+    avatar = asset(player.get("avatar", {}).get("icon") or top.get("icon"))
 
     def stat(label: str, value: Any, note: str = "") -> str:
         return f"""
@@ -131,7 +236,7 @@ def build_report_html(data: dict) -> str:
     def tag(label: Optional[str], icon: Optional[str] = None) -> str:
         if not label:
             return ""
-        icon_html = f'<img src="{_asset(icon)}" alt="">' if icon else ""
+        icon_html = f'<img src="{asset(icon)}" alt="">' if icon else ""
         return f'<span class="tag">{icon_html}{html.escape(str(label))}</span>'
 
     def card(character: dict) -> str:
@@ -148,9 +253,9 @@ def build_report_html(data: dict) -> str:
         ]
         mini = "".join(f'<div class="mini"><span>{html.escape(k)}</span><b>{html.escape(v)}</b></div>' for k, v in stats)
         pos = ", ".join(map(str, character.get("pos") or [])) or "-"
-        preview = _asset(character.get("preview") or character.get("portrait") or character.get("icon"))
-        fallback = _asset(character.get("icon") or character.get("preview") or character.get("portrait"))
-        cone_icon = _asset(cone.get("icon"))
+        preview = asset(character.get("preview") or character.get("portrait") or character.get("icon"))
+        fallback = asset(character.get("icon") or character.get("preview") or character.get("portrait"))
+        cone_icon = asset(cone.get("icon"))
         cone_name = html.escape(str(cone.get("name") or "未装备光锥"))
         cone_meta = f"{'★' * int(cone.get('rarity') or 0)} / Lv.{cone.get('level', '-')} / 叠影 {cone.get('rank', '-')}" if cone else "暂无公开数据"
         return f"""
@@ -238,7 +343,17 @@ async def render_html_to_png(html_path: Path, output_path: Path, width: int, hei
             await page.evaluate(
                 """
                 async (timeout) => {
-                  const urls = Array.from(new Set(Array.from(document.images).map((img) => img.currentSrc || img.src).filter(Boolean)));
+                  const backgroundUrls = [];
+                  const pattern = /url\\(["']?([^"')]+)["']?\\)/g;
+                  document.querySelectorAll("*").forEach((node) => {
+                    const background = getComputedStyle(node).backgroundImage || "";
+                    let match;
+                    while ((match = pattern.exec(background)) !== null) {
+                      backgroundUrls.push(match[1]);
+                    }
+                  });
+                  const inlineUrls = Array.from(document.images).map((img) => img.currentSrc || img.src);
+                  const urls = Array.from(new Set([...inlineUrls, ...backgroundUrls].filter(Boolean)));
                   const waitUrl = (url) => new Promise((resolve) => {
                     const img = new Image();
                     img.onload = resolve;
@@ -322,14 +437,22 @@ class StarRailProfilePlugin(Star):
             int(self.config.get("timeout") or 30),
             int(self.config.get("retries") or 5),
             self.config.get("proxy") or None,
-            bool(self.config.get("use_env_proxy") or False),
+            _bool_config(self.config.get("use_env_proxy"), False),
         )
         output_dir = Path(self.config.get("output_dir") or "data/starrail_profile_reports")
         output_dir.mkdir(parents=True, exist_ok=True)
         player_uid = str((data.get("player") or {}).get("uid") or uid)
         image_path = output_dir / f"starrail_report_{player_uid}.png"
         html_path = Path(tempfile.gettempdir()) / f"starrail_report_{player_uid}.html"
-        html_path.write_text(build_report_html(data), encoding="utf-8")
+        asset_resolver = AssetResolver(
+            self.config.get("asset_base") or ASSET_BASE,
+            int(self.config.get("asset_timeout") or 20),
+            self.config.get("proxy") or None,
+            _bool_config(self.config.get("use_env_proxy"), False),
+            _bool_config(self.config.get("inline_assets"), True),
+        )
+        html = await asyncio.to_thread(build_report_html, data, asset_resolver)
+        html_path.write_text(html, encoding="utf-8")
         await render_html_to_png(
             html_path,
             image_path,
@@ -338,7 +461,7 @@ class StarRailProfilePlugin(Star):
             int(self.config.get("screenshot_timeout") or 120),
             _normalize_browser_channel(self.config.get("browser_channel")),
         )
-        if not bool(self.config.get("keep_html") or False):
+        if not _bool_config(self.config.get("keep_html"), False):
             html_path.unlink(missing_ok=True)
         return image_path
 

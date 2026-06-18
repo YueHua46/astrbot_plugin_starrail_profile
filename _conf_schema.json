@@ -51,6 +51,24 @@
     "type": "bool",
     "default": false
   },
+  "asset_base": {
+    "description": "素材镜像基础地址",
+    "type": "string",
+    "default": "https://fastly.jsdelivr.net/gh/Mar-7th/StarRailRes@master/",
+    "hint": "用于角色头像、立绘、图标素材。默认走 jsDelivr，并在代码内置 cdn.jsdelivr、gcore.jsdelivr、GitHub raw 兜底。"
+  },
+  "asset_timeout": {
+    "description": "单个素材下载超时秒数",
+    "type": "int",
+    "default": 20,
+    "hint": "网络较慢或素材经常空白时可以调高。"
+  },
+  "inline_assets": {
+    "description": "是否将远程素材内嵌进 HTML",
+    "type": "bool",
+    "default": true,
+    "hint": "建议开启。开启后由 Python 先下载素材，避免 Playwright 截图时因浏览器访问远程图片失败而出现白块。"
+  },
   "output_dir": {
     "description": "报告图片输出目录",
     "type": "string",
