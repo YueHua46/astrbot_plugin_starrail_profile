@@ -1,0 +1,57 @@
+{
+  "lang": {
+    "description": "MiHoMo Parsed Data API 语言",
+    "type": "string",
+    "default": "cn"
+  },
+  "timeout": {
+    "description": "接口请求超时秒数",
+    "type": "int",
+    "default": 30
+  },
+  "retries": {
+    "description": "接口请求失败后的最大重试次数，最多 5 次",
+    "type": "int",
+    "default": 5
+  },
+  "proxy": {
+    "description": "可选代理，例如 http://127.0.0.1:7890",
+    "type": "string",
+    "default": ""
+  },
+  "use_env_proxy": {
+    "description": "是否使用系统环境代理",
+    "type": "bool",
+    "default": false
+  },
+  "output_dir": {
+    "description": "报告图片输出目录",
+    "type": "string",
+    "default": "data/starrail_profile_reports"
+  },
+  "screenshot_timeout": {
+    "description": "Playwright 截图超时秒数",
+    "type": "int",
+    "default": 120
+  },
+  "width": {
+    "description": "报告图片宽度",
+    "type": "int",
+    "default": 1080
+  },
+  "height": {
+    "description": "报告图片高度",
+    "type": "int",
+    "default": 1920
+  },
+  "browser_channel": {
+    "description": "可选 Playwright 浏览器通道，例如 chrome、msedge。Linux 推荐留空并安装 chromium。",
+    "type": "string",
+    "default": ""
+  },
+  "keep_html": {
+    "description": "是否保留中间 HTML 文件，调试模板时可打开",
+    "type": "bool",
+    "default": false
+  }
+}

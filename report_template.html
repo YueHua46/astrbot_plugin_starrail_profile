@@ -529,7 +529,7 @@
       return `
         <article class="character" style="--element:${alpha(character.element?.color, 0.3)}">
           <div class="char-art">
-            <img src="${asset(character.preview || character.portrait || character.icon)}" alt="${escapeHtml(character.name)}">
+            <img src="${asset(character.preview || character.portrait || character.icon)}" data-fallback="${asset(character.icon || character.portrait || character.preview)}" onerror="this.onerror=null;this.src=this.dataset.fallback" alt="${escapeHtml(character.name)}">
           </div>
           <div class="char-body">
             <div class="char-top">

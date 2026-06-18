@@ -1,0 +1,9 @@
+name: astrbot_plugin_starrail_profile
+desc: 根据星穹铁道 UID 生成二次元风格展示柜 Profile 图片，支持指令与自然语言触发。
+help: |
+  /srprofile 100534214
+  /sr 100534214
+  也可以直接说：帮我查一下星铁 UID 100534214
+version: v1.0.0
+author: DIANCHEN
+repo: "https://github.com/shengxi/astrbot_plugin_starrail_profile"

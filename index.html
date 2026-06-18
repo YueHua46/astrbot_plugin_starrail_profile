@@ -972,6 +972,7 @@
     const API_BASE = "https://api.mihomo.me/sr_info_parsed";
     const ASSET_BASE = "https://raw.githubusercontent.com/Mar-7th/StarRailRes/master/";
     const STORAGE_KEY = "starrail-profile-data";
+    const MAX_FETCH_RETRIES = 5;
 
     const state = {
       data: null,
@@ -1334,6 +1335,42 @@
       return relicMarkup + setMarkup;
     }
 
+    function wait(ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+
+    function shouldRetryStatus(status) {
+      return [408, 409, 425, 429].includes(status) || status >= 500;
+    }
+
+    async function fetchJsonWithRetry(url, options, retries = MAX_FETCH_RETRIES) {
+      let lastError;
+      for (let attempt = 0; attempt <= retries; attempt += 1) {
+        try {
+          const response = await fetch(url, options);
+          if (!response.ok) {
+            if (shouldRetryStatus(response.status) && attempt < retries) {
+              throw new Error(`接口返回 ${response.status}`);
+            }
+            const error = new Error(`接口返回 ${response.status}`);
+            error.noRetry = true;
+            throw error;
+          }
+          const data = await response.json();
+          if (!data.player) throw new Error("接口响应里没有 player 字段");
+          return data;
+        } catch (error) {
+          lastError = error;
+          if (error.noRetry) break;
+          if (attempt >= retries) break;
+          const delay = Math.min(1500 * (2 ** attempt), 12000);
+          setStatus(`请求失败，${(delay / 1000).toFixed(1)}s 后重试 ${attempt + 1}/${retries}：${error.message}`, "loading");
+          await wait(delay);
+        }
+      }
+      throw lastError;
+    }
+
     async function fetchProfile(force = false) {
       const uid = els.uid.value.trim();
       if (!uid) {
@@ -1345,15 +1382,13 @@
       const url = `${API_BASE}/${encodeURIComponent(uid)}?${params.toString()}`;
       setStatus("正在请求 MiHoMo Parsed Data API...", "loading");
       try {
-        const response = await fetch(url, {
+        const data = await fetchJsonWithRetry(url, {
           headers: { "Accept": "application/json" },
           cache: force ? "reload" : "default"
         });
-        if (!response.ok) throw new Error(`接口返回 ${response.status}`);
-        const data = await response.json();
         render(data);
       } catch (error) {
-        setStatus(`请求失败：${error.message}。如果是浏览器跨域或网络问题，可以粘贴 JSON 渲染。`, "error");
+        setStatus(`请求失败，已重试 ${MAX_FETCH_RETRIES} 次：${error.message}。如果是浏览器跨域或网络问题，可以粘贴 JSON 渲染。`, "error");
       }
     }
 
