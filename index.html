@@ -1,0 +1,1398 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>星穹铁道展示柜资料卡</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23ff7bbd'/%3E%3Cpath d='M32 8l5.6 16.5L55 25l-13.8 10.4L46.3 52 32 42.2 17.7 52l5.1-16.6L9 25l17.4-.5L32 8z' fill='white'/%3E%3C/svg%3E" />
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #11121d;
+      --panel: rgba(255, 255, 255, 0.82);
+      --panel-strong: rgba(255, 255, 255, 0.94);
+      --ink: #23263a;
+      --muted: #747994;
+      --line: rgba(70, 79, 119, 0.16);
+      --pink: #ff7bbd;
+      --rose: #ff5d8f;
+      --cyan: #58d7ff;
+      --mint: #62e8b4;
+      --gold: #ffd36e;
+      --violet: #9582ff;
+      --shadow: 0 24px 70px rgba(43, 37, 74, 0.23);
+      --asset-base: "https://raw.githubusercontent.com/Mar-7th/StarRailRes/master/";
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, "Segoe UI", "Microsoft YaHei", system-ui, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 18% 12%, rgba(255, 123, 189, 0.24), transparent 30%),
+        radial-gradient(circle at 88% 8%, rgba(88, 215, 255, 0.2), transparent 32%),
+        linear-gradient(135deg, #fff4fb 0%, #eff8ff 38%, #fff8df 100%);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -3;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.42) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.42) 1px, transparent 1px);
+      background-size: 38px 38px;
+      mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.82), transparent 82%);
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: auto 0 0 auto;
+      width: min(58vw, 760px);
+      aspect-ratio: 1 / 1.22;
+      z-index: -2;
+      background: url("https://raw.githubusercontent.com/Mar-7th/StarRailRes/master/image/character_portrait/1001.png") right bottom / contain no-repeat;
+      opacity: 0.15;
+      pointer-events: none;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    .page {
+      width: min(1440px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 52px;
+    }
+
+    .shell {
+      display: grid;
+      grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 18px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .panel {
+      border: 1px solid rgba(255, 255, 255, 0.66);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(20px) saturate(1.18);
+    }
+
+    .brand {
+      position: relative;
+      overflow: hidden;
+      padding: 22px;
+      min-height: 332px;
+      color: white;
+      background:
+        linear-gradient(150deg, rgba(35, 41, 74, 0.52), rgba(30, 31, 55, 0.86)),
+        url("https://raw.githubusercontent.com/Mar-7th/StarRailRes/master/image/character_preview/1001.png") center bottom / cover no-repeat;
+      border-color: rgba(255, 255, 255, 0.34);
+    }
+
+    .brand::before {
+      content: "";
+      position: absolute;
+      inset: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 6px;
+      pointer-events: none;
+    }
+
+    .brand-kicker {
+      width: fit-content;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .brand h1 {
+      margin: 16px 0 8px;
+      font-size: clamp(30px, 6vw, 52px);
+      line-height: 0.98;
+      letter-spacing: 0;
+      text-wrap: balance;
+      text-shadow: 0 8px 24px rgba(15, 19, 35, 0.38);
+    }
+
+    .brand p {
+      max-width: 280px;
+      margin: 0;
+      color: rgba(255, 255, 255, 0.88);
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .control-panel {
+      padding: 14px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 96px;
+      gap: 8px;
+    }
+
+    .input,
+    .select,
+    .textarea {
+      width: 100%;
+      border: 1px solid rgba(90, 101, 148, 0.24);
+      border-radius: 8px;
+      color: var(--ink);
+      background: rgba(255, 255, 255, 0.78);
+      outline: none;
+      transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+    }
+
+    .input,
+    .select {
+      min-height: 44px;
+      padding: 0 12px;
+      font-weight: 750;
+    }
+
+    .textarea {
+      min-height: 126px;
+      resize: vertical;
+      padding: 12px;
+      line-height: 1.55;
+      font-size: 13px;
+    }
+
+    .input:focus,
+    .select:focus,
+    .textarea:focus {
+      border-color: rgba(255, 93, 143, 0.58);
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 0 0 4px rgba(255, 123, 189, 0.15);
+    }
+
+    .button {
+      min-height: 44px;
+      border-radius: 8px;
+      padding: 0 14px;
+      color: white;
+      background: linear-gradient(135deg, var(--rose), var(--violet));
+      box-shadow: 0 12px 28px rgba(255, 93, 143, 0.26);
+      font-weight: 900;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+    }
+
+    .button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 16px 34px rgba(255, 93, 143, 0.34);
+    }
+
+    .button:active {
+      transform: translateY(0);
+      filter: saturate(0.92);
+    }
+
+    .button.secondary {
+      color: #535a78;
+      background: rgba(255, 255, 255, 0.76);
+      border: 1px solid rgba(90, 101, 148, 0.18);
+      box-shadow: none;
+    }
+
+    .segmented {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .status {
+      min-height: 38px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.62);
+      color: #626987;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .status-dot {
+      width: 9px;
+      height: 9px;
+      flex: 0 0 auto;
+      border-radius: 99px;
+      background: var(--mint);
+      box-shadow: 0 0 0 5px rgba(98, 232, 180, 0.16);
+    }
+
+    .main {
+      display: grid;
+      gap: 18px;
+      min-width: 0;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      min-height: 352px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(240px, 0.92fr);
+      align-items: end;
+      gap: 14px;
+      padding: 24px;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(120deg, rgba(255, 123, 189, 0.18), transparent 34%),
+        linear-gradient(300deg, rgba(88, 215, 255, 0.17), transparent 42%);
+      pointer-events: none;
+    }
+
+    .hero-copy {
+      position: relative;
+      z-index: 1;
+      align-self: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(255, 123, 189, 0.12);
+      color: #ca477d;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .hero h2 {
+      margin: 14px 0 8px;
+      font-size: clamp(32px, 6vw, 64px);
+      line-height: 0.96;
+      letter-spacing: 0;
+      text-wrap: balance;
+    }
+
+    .signature {
+      min-height: 24px;
+      max-width: 680px;
+      margin: 0;
+      color: #6a6f8d;
+      line-height: 1.7;
+    }
+
+    .hero-art {
+      position: relative;
+      z-index: 1;
+      height: 318px;
+      align-self: end;
+      display: flex;
+      align-items: end;
+      justify-content: center;
+      overflow: visible;
+    }
+
+    .hero-art img {
+      height: min(340px, 42vw);
+      width: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 26px 30px rgba(43, 37, 74, 0.24));
+    }
+
+    .hero-avatar {
+      position: absolute;
+      right: 12px;
+      top: 12px;
+      width: 76px;
+      height: 76px;
+      border: 4px solid white;
+      border-radius: 8px;
+      overflow: hidden;
+      background: linear-gradient(135deg, #fff, #fde7f5);
+      box-shadow: 0 12px 30px rgba(43, 37, 74, 0.2);
+    }
+
+    .hero-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .stat-card {
+      min-height: 106px;
+      padding: 15px;
+      overflow: hidden;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .stat-value {
+      margin-top: 8px;
+      font-size: clamp(24px, 4vw, 38px);
+      line-height: 1;
+      font-weight: 950;
+      color: #2f3249;
+    }
+
+    .stat-note {
+      margin-top: 8px;
+      color: #8a8fa8;
+      font-size: 12px;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: minmax(200px, 1fr) 160px 160px;
+      gap: 10px;
+      padding: 12px;
+      align-items: center;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 6px 2px -4px;
+    }
+
+    .section-title h3 {
+      margin: 0;
+      font-size: 22px;
+      letter-spacing: 0;
+    }
+
+    .section-title span {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .characters-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .character-card {
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 176px minmax(0, 1fr);
+      min-height: 312px;
+      border-radius: 8px;
+      background: linear-gradient(140deg, rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.7));
+      border: 1px solid rgba(255, 255, 255, 0.72);
+      box-shadow: 0 18px 44px rgba(43, 37, 74, 0.15);
+    }
+
+    .character-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(135deg, var(--element-color, rgba(255, 123, 189, 0.26)), transparent 42%),
+        radial-gradient(circle at 92% 8%, rgba(255, 255, 255, 0.82), transparent 26%);
+      opacity: 0.62;
+      pointer-events: none;
+    }
+
+    .character-art {
+      position: relative;
+      z-index: 1;
+      min-height: 312px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      background:
+        linear-gradient(to top, rgba(38, 42, 70, 0.52), transparent 52%),
+        linear-gradient(155deg, rgba(255, 123, 189, 0.2), rgba(88, 215, 255, 0.1));
+      overflow: hidden;
+    }
+
+    .character-art img {
+      height: 312px;
+      width: 230px;
+      object-fit: contain;
+      object-position: center bottom;
+      filter: drop-shadow(0 16px 22px rgba(22, 25, 44, 0.24));
+    }
+
+    .character-body {
+      position: relative;
+      z-index: 1;
+      min-width: 0;
+      padding: 16px;
+      display: grid;
+      gap: 12px;
+      align-content: start;
+    }
+
+    .character-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .character-name {
+      min-width: 0;
+    }
+
+    .character-name h4 {
+      margin: 0;
+      font-size: 24px;
+      line-height: 1.08;
+      letter-spacing: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .character-name p {
+      margin: 6px 0 0;
+      color: #707690;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .rarity {
+      display: inline-flex;
+      min-width: 68px;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 7px 10px;
+      background: linear-gradient(135deg, rgba(255, 211, 110, 0.98), rgba(255, 123, 189, 0.82));
+      color: #4a3145;
+      font-size: 12px;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 28px;
+      max-width: 100%;
+      padding: 5px 8px;
+      border-radius: 999px;
+      color: #4f5672;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(91, 101, 148, 0.14);
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    .chip img {
+      width: 18px;
+      height: 18px;
+      object-fit: contain;
+    }
+
+    .mini-stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 7px;
+    }
+
+    .mini-stat {
+      min-height: 58px;
+      border-radius: 8px;
+      padding: 8px;
+      background: rgba(255, 255, 255, 0.66);
+      border: 1px solid rgba(91, 101, 148, 0.12);
+    }
+
+    .mini-stat span {
+      display: block;
+      color: #8a8fa8;
+      font-size: 11px;
+      font-weight: 800;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .mini-stat strong {
+      display: block;
+      margin-top: 5px;
+      color: #30344c;
+      font-size: 18px;
+      line-height: 1.05;
+      overflow-wrap: anywhere;
+    }
+
+    .light-cone {
+      display: grid;
+      grid-template-columns: 52px minmax(0, 1fr);
+      gap: 10px;
+      align-items: center;
+      padding: 10px;
+      border-radius: 8px;
+      background: rgba(37, 41, 70, 0.08);
+      border: 1px solid rgba(91, 101, 148, 0.12);
+    }
+
+    .light-cone img {
+      width: 52px;
+      height: 52px;
+      border-radius: 8px;
+      object-fit: cover;
+      background: rgba(255, 255, 255, 0.66);
+    }
+
+    .light-cone strong,
+    .light-cone span {
+      display: block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .light-cone strong {
+      color: #30344c;
+      font-size: 14px;
+    }
+
+    .light-cone span {
+      margin-top: 4px;
+      color: #777d99;
+      font-size: 12px;
+      font-weight: 750;
+    }
+
+    details {
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.56);
+      border: 1px solid rgba(91, 101, 148, 0.12);
+      overflow: hidden;
+    }
+
+    summary {
+      min-height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 0 10px;
+      cursor: pointer;
+      color: #4d5571;
+      font-size: 12px;
+      font-weight: 900;
+      list-style: none;
+    }
+
+    summary::-webkit-details-marker {
+      display: none;
+    }
+
+    summary::after {
+      content: "+";
+      width: 22px;
+      height: 22px;
+      display: grid;
+      place-items: center;
+      border-radius: 99px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--pink), var(--cyan));
+      font-weight: 950;
+    }
+
+    details[open] summary::after {
+      content: "-";
+    }
+
+    .details-body {
+      display: grid;
+      gap: 10px;
+      padding: 0 10px 10px;
+    }
+
+    .skills {
+      display: grid;
+      gap: 7px;
+    }
+
+    .skill-row {
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr) auto;
+      gap: 8px;
+      align-items: center;
+      min-height: 42px;
+      padding: 5px 7px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.58);
+    }
+
+    .skill-row img {
+      width: 34px;
+      height: 34px;
+      object-fit: contain;
+    }
+
+    .skill-row strong,
+    .skill-row small {
+      display: block;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .skill-row strong {
+      font-size: 12px;
+      color: #3b405b;
+    }
+
+    .skill-row small {
+      margin-top: 2px;
+      color: #8288a2;
+      font-size: 11px;
+    }
+
+    .skill-level {
+      color: #d94b82;
+      font-size: 12px;
+      font-weight: 950;
+    }
+
+    .relic-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .relic {
+      display: grid;
+      grid-template-columns: 40px minmax(0, 1fr);
+      gap: 8px;
+      padding: 8px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.58);
+    }
+
+    .relic img {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+    }
+
+    .relic strong,
+    .relic span {
+      display: block;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .relic strong {
+      font-size: 12px;
+      color: #3b405b;
+    }
+
+    .relic span {
+      margin-top: 3px;
+      color: #777d99;
+      font-size: 11px;
+      font-weight: 750;
+    }
+
+    .sets {
+      display: grid;
+      gap: 7px;
+    }
+
+    .set-line {
+      display: grid;
+      grid-template-columns: 30px minmax(0, 1fr) auto;
+      gap: 8px;
+      align-items: center;
+      padding: 7px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.58);
+      color: #4d5571;
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    .set-line img {
+      width: 30px;
+      height: 30px;
+      object-fit: contain;
+    }
+
+    .set-line span {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .empty {
+      min-height: 220px;
+      display: grid;
+      place-items: center;
+      padding: 28px;
+      text-align: center;
+      color: #6a6f8d;
+    }
+
+    .empty strong {
+      display: block;
+      color: #30344c;
+      font-size: 22px;
+      margin-bottom: 8px;
+    }
+
+    .raw-panel {
+      overflow: hidden;
+    }
+
+    .raw-panel pre {
+      max-height: 380px;
+      margin: 0;
+      padding: 16px;
+      overflow: auto;
+      color: #edf2ff;
+      background: #252943;
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .hide {
+      display: none !important;
+    }
+
+    @media (max-width: 1120px) {
+      .shell {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+        grid-template-columns: minmax(260px, 0.88fr) minmax(280px, 1.12fr);
+      }
+
+      .brand {
+        min-height: 282px;
+      }
+
+      .characters-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .page {
+        width: min(100% - 18px, 1440px);
+        padding-top: 10px;
+      }
+
+      .sidebar,
+      .hero,
+      .field-row,
+      .toolbar {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        padding: 18px;
+      }
+
+      .hero-art {
+        height: 210px;
+      }
+
+      .hero-art img {
+        height: 242px;
+      }
+
+      .hero-avatar {
+        width: 58px;
+        height: 58px;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .character-card {
+        grid-template-columns: 1fr;
+      }
+
+      .character-art {
+        min-height: 230px;
+      }
+
+      .character-art img {
+        height: 252px;
+      }
+
+      .relic-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <div class="shell">
+      <aside class="sidebar">
+        <section class="brand panel" aria-label="展示柜封面">
+          <div class="brand-kicker">MiHoMo Parsed Data</div>
+          <h1>星穹铁道展示柜</h1>
+          <p>输入 UID 后自动拉取玩家公开展示数据，并渲染成角色、光锥、遗器、技能和统计面板。</p>
+        </section>
+
+        <section class="control-panel panel" aria-label="数据控制台">
+          <div class="field-row">
+            <input id="uidInput" class="input" value="100534214" inputmode="numeric" placeholder="输入 UID" aria-label="UID" />
+            <select id="langSelect" class="select" aria-label="语言">
+              <option value="cn">简中</option>
+              <option value="cht">繁中</option>
+              <option value="en">English</option>
+              <option value="jp">日本語</option>
+              <option value="kr">한국어</option>
+            </select>
+          </div>
+          <div class="segmented">
+            <button id="loadBtn" class="button" type="button">拉取</button>
+            <button id="refreshBtn" class="button secondary" type="button">刷新</button>
+            <button id="demoBtn" class="button secondary" type="button">示例</button>
+          </div>
+          <textarea id="jsonInput" class="textarea" placeholder="也可以把 sr_info_parsed 返回的 JSON 粘贴到这里，然后点“渲染 JSON”。"></textarea>
+          <button id="pasteBtn" class="button secondary" type="button">渲染 JSON</button>
+          <div id="status" class="status"><span class="status-dot"></span><span>准备就绪，等待加载数据。</span></div>
+        </section>
+      </aside>
+
+      <section class="main" aria-live="polite">
+        <section id="hero" class="hero panel">
+          <div class="hero-copy">
+            <span class="eyebrow">Trailblazer Profile</span>
+            <h2 id="playerName">等待资料载入</h2>
+            <p id="playerSignature" class="signature">加载后这里会显示玩家签名、等级、展示角色和收藏统计。</p>
+          </div>
+          <div class="hero-art">
+            <div class="hero-avatar"><img id="avatarImg" alt="" /></div>
+            <img id="heroImg" src="https://raw.githubusercontent.com/Mar-7th/StarRailRes/master/image/character_portrait/1001.png" alt="" />
+          </div>
+        </section>
+
+        <section id="stats" class="stats-grid" aria-label="玩家统计"></section>
+
+        <section class="toolbar panel" aria-label="角色筛选">
+          <input id="searchInput" class="input" placeholder="搜索角色、属性、命途、光锥" aria-label="搜索角色" />
+          <select id="elementFilter" class="select" aria-label="属性筛选">
+            <option value="">全部属性</option>
+          </select>
+          <select id="sortSelect" class="select" aria-label="排序">
+            <option value="pos">展示顺序</option>
+            <option value="level">等级最高</option>
+            <option value="rarity">星级最高</option>
+            <option value="rank">星魂最高</option>
+          </select>
+        </section>
+
+        <div class="section-title">
+          <h3>展示角色</h3>
+          <span id="characterCount">0 位角色</span>
+        </div>
+        <section id="characters" class="characters-grid"></section>
+
+        <section class="raw-panel panel">
+          <details>
+            <summary>原始响应 JSON</summary>
+            <pre id="rawJson">{}</pre>
+          </details>
+        </section>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const API_BASE = "https://api.mihomo.me/sr_info_parsed";
+    const ASSET_BASE = "https://raw.githubusercontent.com/Mar-7th/StarRailRes/master/";
+    const STORAGE_KEY = "starrail-profile-data";
+
+    const state = {
+      data: null,
+      characters: []
+    };
+
+    const $ = (selector) => document.querySelector(selector);
+    const els = {
+      uid: $("#uidInput"),
+      lang: $("#langSelect"),
+      load: $("#loadBtn"),
+      refresh: $("#refreshBtn"),
+      demo: $("#demoBtn"),
+      paste: $("#pasteBtn"),
+      jsonInput: $("#jsonInput"),
+      status: $("#status"),
+      playerName: $("#playerName"),
+      signature: $("#playerSignature"),
+      avatar: $("#avatarImg"),
+      heroImg: $("#heroImg"),
+      stats: $("#stats"),
+      search: $("#searchInput"),
+      elementFilter: $("#elementFilter"),
+      sort: $("#sortSelect"),
+      characters: $("#characters"),
+      count: $("#characterCount"),
+      raw: $("#rawJson")
+    };
+
+    const demoData = {
+      player: {
+        uid: "100000999",
+        nickname: "星海巡游者",
+        level: 70,
+        world_level: 6,
+        friend_count: 91,
+        avatar: { id: "201006", name: "Silver Wolf", icon: "icon/avatar/1006.png" },
+        signature: "在群星之间，把每一张角色卡都排得漂漂亮亮。",
+        is_display: true,
+        space_info: {
+          memory_data: { level: 21, chaos_id: 1014, chaos_level: 11, chaos_star_count: 33 },
+          universe_level: 9,
+          avatar_count: 41,
+          light_cone_count: 74,
+          relic_count: 1858,
+          achievement_count: 398,
+          book_count: 124,
+          music_count: 18
+        }
+      },
+      characters: [
+        {
+          id: "1212",
+          name: "镜流",
+          rarity: 5,
+          rank: 0,
+          level: 80,
+          promotion: 6,
+          icon: "icon/character/1212.png",
+          preview: "image/character_preview/1212.png",
+          portrait: "image/character_portrait/1212.png",
+          path: { id: "Warrior", name: "毁灭", icon: "icon/path/Destruction.png" },
+          element: { id: "Ice", name: "冰", color: "#47C7FD", icon: "icon/element/Ice.png" },
+          skills: [
+            { id: "121201", name: "流影方晖", level: 6, max_level: 6, type_text: "普攻", icon: "icon/skill/1212_basic_atk.png" },
+            { id: "121202", name: "无罅飞光", level: 10, max_level: 10, type_text: "战技", icon: "icon/skill/1212_skill.png" },
+            { id: "121203", name: "昙华生灭，天河泻梦", level: 10, max_level: 10, type_text: "终结技", icon: "icon/skill/1212_ultimate.png" }
+          ],
+          light_cone: { id: "23014", name: "此身为剑", rarity: 5, rank: 1, level: 80, promotion: 6, icon: "icon/light_cone/23014.png" },
+          relics: [
+            { id: "61041", name: "密林卧雪的猎人荒神兜帽", set_name: "密林卧雪的猎人", rarity: 5, level: 15, icon: "icon/relic/104_0.png", main_affix: { name: "生命值", display: "705" } },
+            { id: "61042", name: "密林卧雪的猎人蜥革手套", set_name: "密林卧雪的猎人", rarity: 5, level: 15, icon: "icon/relic/104_1.png", main_affix: { name: "攻击力", display: "352" } }
+          ],
+          relic_sets: [{ id: "104", name: "密林卧雪的猎人", num: 2, icon: "icon/relic/104.png" }],
+          attributes: [
+            { field: "hp", name: "生命值", display: "3250" },
+            { field: "atk", name: "攻击力", display: "2542" },
+            { field: "def", name: "防御力", display: "1001" },
+            { field: "spd", name: "速度", display: "134" },
+            { field: "crit_rate", name: "暴击率", display: "48.5%" },
+            { field: "crit_dmg", name: "暴击伤害", display: "210.4%" }
+          ],
+          pos: [0]
+        },
+        {
+          id: "1301",
+          name: "阮·梅",
+          rarity: 5,
+          rank: 1,
+          level: 80,
+          promotion: 6,
+          icon: "icon/character/1301.png",
+          preview: "image/character_preview/1301.png",
+          portrait: "image/character_portrait/1301.png",
+          path: { id: "Harmony", name: "同谐", icon: "icon/path/Harmony.png" },
+          element: { id: "Ice", name: "冰", color: "#47C7FD", icon: "icon/element/Ice.png" },
+          skills: [
+            { id: "130101", name: "一针幽兰", level: 6, max_level: 6, type_text: "普攻", icon: "icon/skill/1301_basic_atk.png" },
+            { id: "130102", name: "慢捻抹复挑", level: 10, max_level: 10, type_text: "战技", icon: "icon/skill/1301_skill.png" }
+          ],
+          light_cone: { id: "23024", name: "镜中故我", rarity: 5, rank: 1, level: 80, promotion: 6, icon: "icon/light_cone/23024.png" },
+          relic_sets: [{ id: "118", name: "骇域漫游的信使", num: 4, icon: "icon/relic/118.png" }],
+          attributes: [
+            { field: "hp", name: "生命值", display: "3988" },
+            { field: "atk", name: "攻击力", display: "1810" },
+            { field: "def", name: "防御力", display: "1324" },
+            { field: "spd", name: "速度", display: "161" },
+            { field: "break_dmg", name: "击破特攻", display: "183.2%" },
+            { field: "energy_recovery", name: "能量恢复", display: "124.4%" }
+          ],
+          relics: [],
+          pos: [1]
+        }
+      ]
+    };
+
+    function setStatus(message, tone = "ready") {
+      const color = tone === "error" ? "#ff5d8f" : tone === "loading" ? "#58d7ff" : "#62e8b4";
+      els.status.innerHTML = `<span class="status-dot" style="background:${color};box-shadow:0 0 0 5px ${hexToAlpha(color, 0.16)}"></span><span>${escapeHtml(message)}</span>`;
+    }
+
+    function hexToAlpha(hex, alpha) {
+      const value = hex.replace("#", "");
+      const bigint = parseInt(value, 16);
+      const r = (bigint >> 16) & 255;
+      const g = (bigint >> 8) & 255;
+      const b = bigint & 255;
+      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function asset(path) {
+      if (!path) return "";
+      if (/^https?:\/\//i.test(path)) return path;
+      return ASSET_BASE + String(path).replace(/^\/+/, "");
+    }
+
+    function fieldValue(source, fields) {
+      const list = [...(source.attributes || []), ...(source.additions || []), ...(source.statistics || [])];
+      for (const field of fields) {
+        const found = list.find((item) => item.field === field || item.name === field);
+        if (found) return found.display ?? found.value ?? "-";
+      }
+      return "-";
+    }
+
+    function statCard(label, value, note) {
+      return `
+        <article class="stat-card panel">
+          <div class="stat-label">${escapeHtml(label)}</div>
+          <div class="stat-value">${escapeHtml(value ?? "-")}</div>
+          <div class="stat-note">${escapeHtml(note ?? "")}</div>
+        </article>
+      `;
+    }
+
+    function render(data) {
+      if (!data || !data.player) {
+        throw new Error("JSON 里没有 player 字段。");
+      }
+      state.data = data;
+      state.characters = Array.isArray(data.characters) ? data.characters : [];
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+
+      renderPlayer(data.player);
+      renderStats(data.player, state.characters);
+      renderFilters();
+      renderCharacters();
+      els.raw.textContent = JSON.stringify(data, null, 2);
+      setStatus(`已渲染 ${data.player.nickname || data.player.uid || "玩家"} 的资料。`);
+    }
+
+    function renderPlayer(player) {
+      const firstCharacter = state.characters[0];
+      els.playerName.textContent = player.nickname || `UID ${player.uid}`;
+      els.signature.textContent = player.signature || "这位开拓者还没有留下签名。";
+      els.avatar.src = asset(player.avatar?.icon || firstCharacter?.icon);
+      els.avatar.alt = player.avatar?.name || player.nickname || "";
+      els.heroImg.src = asset(firstCharacter?.portrait || firstCharacter?.preview || player.avatar?.icon || "image/character_portrait/1001.png");
+      els.heroImg.alt = firstCharacter?.name || "";
+    }
+
+    function renderStats(player, characters) {
+      const info = player.space_info || {};
+      const memory = info.memory_data || {};
+      els.stats.innerHTML = [
+        statCard("开拓等级", player.level, `UID ${player.uid || "-"}`),
+        statCard("均衡等级", player.world_level, `${player.friend_count ?? 0} 位好友`),
+        statCard("角色收集", info.avatar_count ?? characters.length, `${characters.length} 位正在展示`),
+        statCard("混沌回忆", memory.chaos_star_count ?? "-", `层数 ${memory.chaos_level ?? memory.level ?? "-"}`),
+        statCard("模拟宇宙", info.universe_level ?? "-", "最高挑战记录"),
+        statCard("光锥", info.light_cone_count ?? "-", "账号公开统计"),
+        statCard("遗器", info.relic_count ?? "-", "账号公开统计"),
+        statCard("成就", info.achievement_count ?? "-", `书籍 ${info.book_count ?? "-"} / 音乐 ${info.music_count ?? "-"}`)
+      ].join("");
+    }
+
+    function renderFilters() {
+      const current = els.elementFilter.value;
+      const options = [...new Set(state.characters.map((character) => character.element?.name).filter(Boolean))].sort();
+      els.elementFilter.innerHTML = `<option value="">全部属性</option>${options.map((name) => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join("")}`;
+      if (options.includes(current)) els.elementFilter.value = current;
+    }
+
+    function renderCharacters() {
+      const query = els.search.value.trim().toLowerCase();
+      const element = els.elementFilter.value;
+      const sort = els.sort.value;
+      let characters = [...state.characters];
+
+      if (query) {
+        characters = characters.filter((character) => {
+          const haystack = [
+            character.name,
+            character.element?.name,
+            character.path?.name,
+            character.light_cone?.name,
+            ...(character.relic_sets || []).map((set) => set.name)
+          ].join(" ").toLowerCase();
+          return haystack.includes(query);
+        });
+      }
+
+      if (element) {
+        characters = characters.filter((character) => character.element?.name === element);
+      }
+
+      characters.sort((a, b) => {
+        if (sort === "level") return (b.level || 0) - (a.level || 0);
+        if (sort === "rarity") return (b.rarity || 0) - (a.rarity || 0);
+        if (sort === "rank") return (b.rank || 0) - (a.rank || 0);
+        return (a.pos?.[0] ?? 99) - (b.pos?.[0] ?? 99);
+      });
+
+      els.count.textContent = `${characters.length} / ${state.characters.length} 位角色`;
+      if (!characters.length) {
+        els.characters.innerHTML = `
+          <div class="empty panel">
+            <div><strong>没有匹配的角色</strong><span>换个关键词或筛选条件试试。</span></div>
+          </div>
+        `;
+        return;
+      }
+      els.characters.innerHTML = characters.map(characterCard).join("");
+    }
+
+    function characterCard(character) {
+      const color = character.element?.color || "#ff7bbd";
+      const stats = [
+        ["生命", fieldValue(character, ["hp", "生命值", "HP"])],
+        ["攻击", fieldValue(character, ["atk", "攻击力", "ATK"])],
+        ["速度", fieldValue(character, ["spd", "速度", "SPD"])],
+        ["暴击", fieldValue(character, ["crit_rate", "暴击率", "CRIT Rate"])],
+        ["暴伤", fieldValue(character, ["crit_dmg", "暴击伤害", "CRIT DMG"])],
+        ["击破", fieldValue(character, ["break_dmg", "击破特攻", "Break Effect"])]
+      ];
+
+      return `
+        <article class="character-card" style="--element-color:${hexToAlpha(color, 0.34)}">
+          <div class="character-art">
+            <img loading="lazy" src="${asset(character.preview || character.portrait || character.icon)}" alt="${escapeHtml(character.name)}">
+          </div>
+          <div class="character-body">
+            <div class="character-head">
+              <div class="character-name">
+                <h4>${escapeHtml(character.name || "未知角色")}</h4>
+                <p>Lv.${escapeHtml(character.level ?? "-")} / 星魂 ${escapeHtml(character.rank ?? 0)} / 晋阶 ${escapeHtml(character.promotion ?? "-")}</p>
+              </div>
+              <span class="rarity">${"★".repeat(character.rarity || 0)}</span>
+            </div>
+            <div class="chips">
+              ${infoChip(character.element?.name, character.element?.icon)}
+              ${infoChip(character.path?.name, character.path?.icon)}
+              ${infoChip(`展位 ${(character.pos || []).join(", ") || "-"}`)}
+            </div>
+            <div class="mini-stats">
+              ${stats.map(([label, value]) => `<div class="mini-stat"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`).join("")}
+            </div>
+            ${lightCone(character.light_cone)}
+            ${detailBlock("技能", skills(character.skills))}
+            ${detailBlock("遗器与套装", relics(character.relics, character.relic_sets))}
+          </div>
+        </article>
+      `;
+    }
+
+    function infoChip(label, icon) {
+      if (!label) return "";
+      return `<span class="chip">${icon ? `<img loading="lazy" src="${asset(icon)}" alt="">` : ""}${escapeHtml(label)}</span>`;
+    }
+
+    function lightCone(cone) {
+      if (!cone) return `<div class="light-cone"><div></div><div><strong>未装备光锥</strong><span>暂无公开数据</span></div></div>`;
+      return `
+        <div class="light-cone">
+          <img loading="lazy" src="${asset(cone.icon)}" alt="">
+          <div>
+            <strong>${escapeHtml(cone.name)}</strong>
+            <span>${"★".repeat(cone.rarity || 0)} / Lv.${escapeHtml(cone.level ?? "-")} / 叠影 ${escapeHtml(cone.rank ?? "-")}</span>
+          </div>
+        </div>
+      `;
+    }
+
+    function detailBlock(title, body) {
+      return `
+        <details>
+          <summary>${escapeHtml(title)}</summary>
+          <div class="details-body">${body}</div>
+        </details>
+      `;
+    }
+
+    function skills(skillsData = []) {
+      if (!skillsData.length) return `<div class="status">暂无技能数据</div>`;
+      return `
+        <div class="skills">
+          ${skillsData.slice(0, 8).map((skill) => `
+            <div class="skill-row">
+              <img loading="lazy" src="${asset(skill.icon)}" alt="">
+              <div><strong>${escapeHtml(skill.name)}</strong><small>${escapeHtml(skill.type_text || skill.effect_text || skill.type || "技能")}</small></div>
+              <span class="skill-level">${escapeHtml(skill.level ?? "-")}/${escapeHtml(skill.max_level ?? "-")}</span>
+            </div>
+          `).join("")}
+        </div>
+      `;
+    }
+
+    function relics(relicList = [], sets = []) {
+      const relicMarkup = relicList.length
+        ? `<div class="relic-grid">${relicList.map((relic) => `
+            <div class="relic">
+              <img loading="lazy" src="${asset(relic.icon)}" alt="">
+              <div>
+                <strong>${escapeHtml(relic.name)}</strong>
+                <span>+${escapeHtml(relic.level ?? 0)} / ${escapeHtml(relic.main_affix?.name ?? "-")} ${escapeHtml(relic.main_affix?.display ?? "")}</span>
+              </div>
+            </div>
+          `).join("")}</div>`
+        : `<div class="status">暂无遗器数据</div>`;
+
+      const setMarkup = sets.length
+        ? `<div class="sets">${sets.map((set) => `
+            <div class="set-line">
+              <img loading="lazy" src="${asset(set.icon)}" alt="">
+              <span>${escapeHtml(set.name)}</span>
+              <strong>${escapeHtml(set.num)} 件</strong>
+            </div>
+          `).join("")}</div>`
+        : "";
+
+      return relicMarkup + setMarkup;
+    }
+
+    async function fetchProfile(force = false) {
+      const uid = els.uid.value.trim();
+      if (!uid) {
+        setStatus("请先输入 UID。", "error");
+        return;
+      }
+      const params = new URLSearchParams({ lang: els.lang.value });
+      if (force) params.set("is_force_update", "true");
+      const url = `${API_BASE}/${encodeURIComponent(uid)}?${params.toString()}`;
+      setStatus("正在请求 MiHoMo Parsed Data API...", "loading");
+      try {
+        const response = await fetch(url, {
+          headers: { "Accept": "application/json" },
+          cache: force ? "reload" : "default"
+        });
+        if (!response.ok) throw new Error(`接口返回 ${response.status}`);
+        const data = await response.json();
+        render(data);
+      } catch (error) {
+        setStatus(`请求失败：${error.message}。如果是浏览器跨域或网络问题，可以粘贴 JSON 渲染。`, "error");
+      }
+    }
+
+    function renderJsonInput() {
+      try {
+        render(JSON.parse(els.jsonInput.value));
+      } catch (error) {
+        setStatus(`JSON 解析失败：${error.message}`, "error");
+      }
+    }
+
+    function boot() {
+      const cached = localStorage.getItem(STORAGE_KEY);
+      if (cached) {
+        try {
+          render(JSON.parse(cached));
+          setStatus("已恢复上次渲染的数据。");
+        } catch {
+          localStorage.removeItem(STORAGE_KEY);
+          render(demoData);
+        }
+      } else {
+        render(demoData);
+        setStatus("已载入内置示例，可输入 UID 拉取真实资料。");
+      }
+
+      els.load.addEventListener("click", () => fetchProfile(false));
+      els.refresh.addEventListener("click", () => fetchProfile(true));
+      els.demo.addEventListener("click", () => render(demoData));
+      els.paste.addEventListener("click", renderJsonInput);
+      els.search.addEventListener("input", renderCharacters);
+      els.elementFilter.addEventListener("change", renderCharacters);
+      els.sort.addEventListener("change", renderCharacters);
+      els.uid.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") fetchProfile(false);
+      });
+    }
+
+    boot();
+  </script>
+</body>
+</html>
