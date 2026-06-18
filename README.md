@@ -1,4 +1,4 @@
-# hk-star-rail-api
+# hk-star-rail-profile
 
 把 MiHoMo Parsed Data API 的星穹铁道展示柜数据渲染为二次元风格 HTML，并可按 UID 生成 1080x1920 报告图片。
 

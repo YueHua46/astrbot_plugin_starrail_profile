@@ -1,7 +1,7 @@
 [project]
-name = "hk-star-rail-api"
+name = "hk-star-rail-profile"
 version = "0.1.0"
-description = "Add your description here"
+description = "根据星穹铁道 UID 生成二次元风格 图片 报告"
 readme = "README.md"
 requires-python = ">=3.11.9"
 dependencies = [
